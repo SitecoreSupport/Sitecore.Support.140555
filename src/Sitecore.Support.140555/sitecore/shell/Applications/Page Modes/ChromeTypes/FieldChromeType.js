@@ -1,6 +1,6 @@
 ﻿Sitecore.PageModes.ChromeTypes.Field = Sitecore.PageModes.ChromeTypes.ChromeType.extend({
     constructor: function () {
-        //SUPPORT FIX 140555 (FOR IE11) [part1] . Fixes IE11 bug: replacing empty values of fields with <br> or <br />
+        //SUPPORT FIX 140555 (FOR IE11) [part1] . Fixes IE11 bug: replacing empty values of fields with <br> or <br /> or "\r"
         if ($sc.util().isIE) {
             window.onload = function () {
                 var element = window.document.getElementById("scFieldValues");
@@ -13,8 +13,14 @@
                         fld.innerText = "[No text in field]";
                         fld.setAttribute("scwatermark", "true");
                     }
-                    else if (inputs[i].attributes['value'].value == "<br />") {
+                    if (inputs[i].attributes['value'].value == "<br />") {
                         inputs[i].attributes['value'].value = inputs[i].attributes['value'].value.replace("<br />", "");
+                        var fld = window.document.getElementById(inputs[i].attributes['id'].value + "_edit");
+                        fld.innerText = "[No text in field]";
+                        fld.setAttribute("scwatermark", "true");
+                    }
+                    if (inputs[i].attributes['value'].value == "\r") {
+                        inputs[i].attributes['value'].value = inputs[i].attributes['value'].value.replace("\r", "");
                         var fld = window.document.getElementById(inputs[i].attributes['id'].value + "_edit");
                         fld.innerText = "[No text in field]";
                         fld.setAttribute("scwatermark", "true");
