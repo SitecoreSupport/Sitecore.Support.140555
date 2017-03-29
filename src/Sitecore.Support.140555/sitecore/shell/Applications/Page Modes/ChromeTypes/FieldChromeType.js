@@ -147,9 +147,10 @@
     this.chrome.element.bind("click", this.onClickHandler);
     this.chrome.element.bind("blur", this.onBlurHandler);
 
-    if (this.fieldType != "rich text" || this.preventLineBreak()) {
-      this.chrome.element.bind("keydown", this.onKeyDownHandler);
-    }
+    // Sitecore.Support.103584
+        if ((this.fieldType != "rich text" && this.fieldType != "multi-line text") || this.preventLineBreak()) {
+            this.chrome.element.bind("keydown", this.onKeyDownHandler);
+        }
   },
 
   preventLineBreak: function () {
@@ -597,16 +598,18 @@
 
   onKeyUp: function (event) {
     if ($sc.inArray(event.keyCode, this._ignoreKeyCodes) > -1) return;
-    if (this.chrome.element.attr("scfieldtype") == "rich text"
-      && event.currentTarget.innerText != null && event.currentTarget.innerText.trim() == "") {
-      event.currentTarget.innerHTML = "";
-    }
+    // Sitecore.Support.103584
+        if ((this.chrome.element.attr("scfieldtype") == "rich text" || this.chrome.element.attr("scfieldtype") != "multi-line text")
+          && event.currentTarget.innerText != null && event.currentTarget.innerText.trim() == "") {
+            event.currentTarget.innerHTML = "";
+        }
     if (this.fieldValue.val() != event.currentTarget.innerHTML) {
       this.setModified();
       //at least one modification has been done, so we don't need to check for modifications any more
-      if (this.chrome.element.attr("scfieldtype") != "rich text") {
-        this.chrome.element.unbind("keyup", this.onKeyUpHanler);
-      }
+      // Sitecore.Support.103584
+            if (this.chrome.element.attr("scfieldtype") != "rich text" && this.chrome.element.attr("scfieldtype") != "multi-line text") {
+                this.chrome.element.unbind("keyup", this.onKeyUpHanler);
+            }
     }
   },
 
