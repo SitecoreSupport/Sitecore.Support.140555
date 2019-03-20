@@ -57,6 +57,10 @@
             if (this.contentEditable()) {
                 if (this.chrome.element.attr("scWatermark") == "true") {
                     this.watermarkHTML = this.chrome.element.html();
+                } else if ($sc.removeTags(this.fieldValue[0].defaultValue) === "" &&
+                    this.chrome.element.attr("scWatermark") == null) {
+                    this.watermarkHTML = this.chrome.element.attr("scDefaultText");
+                    this._tryUpdateFromWatermark();
                 }
 
                 this.onKeyDownHandler = $sc.proxy(this.onKeyDown, this);
@@ -289,9 +293,7 @@
             if (this.isWatermark()) return;
 
             var html = this.chrome.element.html();
-            if (html == "<br>" && this.chrome.type.fieldType == "single-line text") { // fix for IE11 adding linebreaks
-                html = "";
-            }
+
             if (this._extraLineBreakAdded) {
                 var clone = this.chrome.element.clone();
                 clone.find(".scExtraBreak").remove();
@@ -1064,11 +1066,12 @@
         },
 
         _tryUpdateFromWatermark: function() {
+
+            var defaultValue = this.fieldValue[0].defaultValue;
+
             if (this.watermarkHTML &&
-                (this.chrome.element.html() == "" ||
-                    (this.fieldType == "text" || this.fieldType == "rich text") &&
-                    $sc.removeTags(this.chrome.element.html()) == "") &&
-                this.fieldValue[0].defaultValue == "") {
+                ($sc.removeTags(this.chrome.element.html()) === "" &&
+                    $sc.removeTags(defaultValue) === "")) {
                 this.chrome.element.update(this.watermarkHTML);
                 this.chrome.element.attr("scWatermark", "true");
             }
